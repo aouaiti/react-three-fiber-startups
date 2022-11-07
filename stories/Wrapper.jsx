@@ -36,14 +36,15 @@ export const Setup = ({
             <pointLight intensity={1} position={[0, 6, 0]} />
           </>
         )}
-        <fog attach="fog" args={[theme, 5, 10]} />
+        <fog attach="fog" args={[theme, 0, 40]} />
         {ground && (
           <Plane
             position={[0, -0.1, 0]}
             rotation-x={-Math.PI / 2}
-            args={[100, 100, 4, 4]}
+            args={[100, 100, 1, 1]}
+            receiveShadow
           >
-            <meshBasicMaterial color={theme} wireframe={false} />
+            <meshStandardMaterial color={theme} wireframe={false} />
           </Plane>
         )}
         {axes && <axesHelper />}
@@ -51,7 +52,7 @@ export const Setup = ({
       <planeBufferGeometry attach="geometry" args={[20, 20]} />
       <meshBasicMaterial attach="material" color="#121212" />
     </mesh> */}
-        {grid && <gridHelper args={[30, 30]} position={[0, -0.001, 0]} />}
+        {/* {grid && <gridHelper args={[30, 30]} position={[0, -0.001, 0]} />} */}
         {controls && <OrbitControls makeDefault />}
       </Canvas>
     </div>
