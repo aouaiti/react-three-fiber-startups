@@ -10,7 +10,7 @@ export const Setup = ({
   axes,
   grid,
   cameraFov = 75,
-  cameraPosition = new Vector3(1.5, 0.5, 1.5),
+  cameraPosition = new Vector3(4.5, 2.5, 4.5),
   controls = true,
   lights = true,
   ...restProps
@@ -36,7 +36,7 @@ export const Setup = ({
             <pointLight intensity={1} position={[0, 6, 0]} />
           </>
         )}
-        <fog attach="fog" args={[theme, 0, 40]} />
+        <fog attach='fog' args={[theme, 0, 40]} />
         {ground && (
           <Plane
             position={[0, -0.1, 0]}
@@ -47,7 +47,7 @@ export const Setup = ({
             <meshStandardMaterial color={theme} wireframe={false} />
           </Plane>
         )}
-        {axes && <axesHelper />}
+        {axes && <axesHelper args={[10]} />}
         {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
       <planeBufferGeometry attach="geometry" args={[20, 20]} />
       <meshBasicMaterial attach="material" color="#121212" />
