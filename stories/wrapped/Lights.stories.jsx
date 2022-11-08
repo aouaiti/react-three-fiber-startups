@@ -2,8 +2,10 @@ import * as React from "react";
 import { Setup } from "../Wrapper";
 import { Box, SpotLight, useHelper } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
-import { PointLightHelper } from "three";
-import { useRef } from "react";
+import { DirectionalLightHelper, CameraHelper } from "three";
+import { useRef, useEffect } from "react";
+import { useThree, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 export default {
   title: "Staging/Lights",
@@ -52,16 +54,26 @@ const animateBox = {
   },
 };
 
-const Lighteu = () => {
-  const pLightRef = useRef(null);
-  useHelper(pLightRef, PointLightHelper, 1, "red");
+const DLight = () => {
+  const dLightRef = useRef(null);
+  //currently (as far as i know) there is no drei or fiber elem that represents light's camera
+  //so i used the imperative threejs way by extracting the scene element from the useThree hook
+  //begin light camera
+  const { scene } = useThree();
+  useEffect(() => {
+    if (!dLightRef) return;
+    scene.add(new THREE.CameraHelper(dLightRef.current?.shadow?.camera));
+  }, [dLightRef]);
+  //end light camera
+  useHelper(dLightRef, DirectionalLightHelper, 5, "blue");
+  // useFrame((state) => console.log(state));
   return (
     <motion.group
       animate={{ type: "tween", rotateY: Math.PI * 2 }}
       transition={{ duration: 4, loop: Infinity, ease: "linear" }}
     >
-      <motion.pointLight
-        ref={pLightRef}
+      <motion.directionalLight
+        ref={dLightRef}
         position={[-4, 1, 0]}
         variants={animateSpot}
         initial="init"
@@ -78,6 +90,7 @@ const Template = function LightsScene(...args) {
   // console.log(args[0]);
   // const theme = args[1].globals.theme;
 
+  console.log(args[0]);
   return (
     <>
       {/* <motion.group
@@ -100,7 +113,7 @@ const Template = function LightsScene(...args) {
           <meshStandardMaterial color={"red"} metalness={0.9} roughness={1} />
         </Box>
       </motion.group>
-      <Lighteu />
+      <DLight />
     </>
   );
 };
