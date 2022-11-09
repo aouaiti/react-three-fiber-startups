@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Setup } from "../Wrapper";
 import { Stars } from "@react-three/drei";
-import PropTypes from "prop-types";
 
 export default {
   title: "Staging/Stars",
@@ -22,7 +21,7 @@ export default {
   argTypes: {
     stars: {
       name: "stars",
-      defaultValue: true,
+      // defaultValue: true,
       description: "display stars",
       control: { type: "boolean" },
     },

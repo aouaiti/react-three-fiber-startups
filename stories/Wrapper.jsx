@@ -39,7 +39,7 @@ export const Setup = ({
         <fog attach='fog' args={[theme, 30, 40]} />
         {ground && (
           <Plane
-            position={[0, -0.1, 0]}
+            position={[0, -0.001, 0]}
             rotation-x={-Math.PI / 2}
             args={[100, 100, 1, 1]}
             receiveShadow

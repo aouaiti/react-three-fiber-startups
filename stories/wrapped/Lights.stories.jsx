@@ -1,16 +1,16 @@
 import * as React from "react";
 import { Setup } from "../Wrapper";
-import { Box, SpotLight, useHelper } from "@react-three/drei";
+import { Box, useHelper } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
 import { DirectionalLightHelper, CameraHelper } from "three";
-import { useRef, useEffect, useCallback, useState } from "react";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useRef, useEffect, useState } from "react";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useControls, folder } from "leva";
 
 export default {
   title: "Staging/Lights",
-  component: SpotLight,
+  component: Box,
   decorators: [
     (storyFn, context) => (
       <Setup
@@ -18,38 +18,13 @@ export default {
         ground={LightsScene.args.ground}
         axes={LightsScene.args.axes}
         grid={LightsScene.args.grid}
+        lights={LightsScene.args.lights}
       >
         {" "}
         {storyFn()}
       </Setup>
     ),
   ],
-  argTypes: {
-    top: {
-      name: "top",
-      defaultValue: 5,
-      description: "display stars",
-      control: { type: "range", min: 1, max: 5, step: 0.01 },
-    },
-    left: {
-      name: "left",
-      defaultValue: -5,
-      description: "display stars",
-      control: { type: "range", min: -5, max: -1, step: 0.01 },
-    },
-    right: {
-      name: "right",
-      defaultValue: 5,
-      description: "display stars",
-      control: { type: "range", min: 1, max: 5, step: 0.01 },
-    },
-    bottom: {
-      name: "bottom",
-      defaultValue: -5,
-      description: "display stars",
-      control: { type: "range", min: -5, max: -1, step: 0.01 },
-    },
-  },
 };
 
 const animateSpot = {
@@ -74,21 +49,8 @@ const animateBox = {
 };
 
 const DLight = ({ top, left, right, bottom }) => {
-  const {
-    string,
-    font,
-    scale,
-    widtht,
-    widthl,
-    widthr,
-    widthb,
-    repeat,
-    textColor,
-    sceneColor,
-    dragConfig,
-  } = useControls({
-    text: folder({
-      string: "POIMANDRES",
+  const { widtht, widthl, widthr, widthb } = useControls({
+    camera: folder({
       widtht: {
         value: 5,
         min: 1,
@@ -126,11 +88,6 @@ const DLight = ({ top, left, right, bottom }) => {
         // },
       },
     }),
-    shape: folder({
-      scale: { value: [0.2, 0.2, 0.2], min: 0.1, max: 1, lock: true },
-      sceneColor: "#000",
-      repeat: { value: [12, 3], label: "text. repeat", joystick: false },
-    }),
   });
 
   const dLightRef = useRef(null);
@@ -155,21 +112,6 @@ const DLight = ({ top, left, right, bottom }) => {
     console.log(scene);
     return () => scene.remove(camHelp);
   }, [widtht, widthb, widthr, widthl, dLightRef]);
-
-  // const fctCam = () => {
-  //   // console.log(dLightRef.current.shadow.camera);
-  //   dLightRef.current.shadow.camera.far = 7;
-  //   dLightRef.current.shadow.camera.top = 5;
-  //   dLightRef.current.shadow.camera.left = 5;
-  //   dLightRef.current.shadow.camera.right = 5;
-  //   dLightRef.current.shadow.camera.bottom = 5;
-
-  //   setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
-  //   // return () => scene.remove(camHelp);
-  //   scene.add(new THREE.CameraHelper(dLightRef.current.shadow.camera));
-  //   console.log(scene);
-  //   // scene.remove("CameraHelper");
-  // };
 
   //end light camera
   useHelper(dLightRef, DirectionalLightHelper, 5, "blue");
@@ -200,16 +142,7 @@ const Template = function LightsScene(...args) {
   // console.log(args[0]);
   return (
     <>
-      {/* <motion.group
-        variants={animateSpot}
-        initial="init"
-        animate="animate"
-        transition={{ duration: 5 }}
-      >
-        <SpotLight position={[1, 2, 1]} castShadow />
-      </motion.group> */}
-      <ambientLight intensity={0.5} color={"blue"} />
-      {/* <hemisphereLight arg={[0x0f0, 0x0f0, 3]} /> */}
+      <ambientLight intensity={0.5} color={"white"} />
       <motion.group
         position={[0.5, 0.5, 0.5]}
         variants={animateBox}
@@ -225,15 +158,12 @@ const Template = function LightsScene(...args) {
   );
 };
 
-export const LightsScene = Template.bind({});
+export const LightsScene = Template.bind();
 LightsScene.args = {
   ground: true,
   axes: true,
   grid: true,
-  top: 5,
-  left: -5,
-  right: 5,
-  bottom: -5,
+  lights: false,
 };
 
 LightsScene.parameters = {
