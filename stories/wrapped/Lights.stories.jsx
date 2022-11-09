@@ -6,6 +6,7 @@ import { DirectionalLightHelper, CameraHelper } from "three";
 import { useRef, useEffect, useCallback, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useControls, folder } from "leva";
 
 export default {
   title: "Staging/Lights",
@@ -73,31 +74,102 @@ const animateBox = {
 };
 
 const DLight = ({ top, left, right, bottom }) => {
+  const {
+    string,
+    font,
+    scale,
+    widtht,
+    widthl,
+    widthr,
+    widthb,
+    repeat,
+    textColor,
+    sceneColor,
+    dragConfig,
+  } = useControls({
+    text: folder({
+      string: "POIMANDRES",
+      widtht: {
+        value: 5,
+        min: 1,
+        max: 5,
+        step: 0.5,
+        // onChange: (v) => {
+        //   fctCam();
+        // },
+      },
+      widthb: {
+        value: -5,
+        min: -5,
+        max: -1,
+        step: 0.5,
+        // onChange: (v) => {
+        //   fctCam();
+        // },
+      },
+      widthl: {
+        value: -5,
+        min: -5,
+        max: -1,
+        step: 0.5,
+        // onChange: (v) => {
+        //   fctCam();
+        // },
+      },
+      widthr: {
+        value: 5,
+        min: 1,
+        max: 5,
+        step: 0.5,
+        // onChange: (v) => {
+        //   fctCam();
+        // },
+      },
+    }),
+    shape: folder({
+      scale: { value: [0.2, 0.2, 0.2], min: 0.1, max: 1, lock: true },
+      sceneColor: "#000",
+      repeat: { value: [12, 3], label: "text. repeat", joystick: false },
+    }),
+  });
+
   const dLightRef = useRef(null);
   const [camHelp, setCamHelp] = useState();
+  // if (dLightRef.current) dLightRef.current.shadow.camera.top = width;
   //currently (as far as i know) there is no drei or fiber elem that represents light's camera
   //so i used the imperative threejs way by extracting the scene element from the useThree hook
   //begin light camera
   const { scene } = useThree();
-  // dLightRef.current.shadow.camera.top = 1;
+
   useEffect(() => {
-    if (!dLightRef) return;
-    // console.log(dLightRef.current.shadow.camera);
-    setCamHelp(new THREE.CameraHelper(dLightRef.current?.shadow?.camera));
-  }, [dLightRef]);
-  useEffect(() => {
-    // if (camHelp) return;
+    scene.remove(camHelp);
     dLightRef.current.shadow.camera.far = 7;
-    dLightRef.current.shadow.camera.top = top;
-    dLightRef.current.shadow.camera.left = left;
-    dLightRef.current.shadow.camera.right = right;
-    dLightRef.current.shadow.camera.bottom = bottom;
+    dLightRef.current.shadow.camera.top = widtht;
+    dLightRef.current.shadow.camera.left = widthl;
+    dLightRef.current.shadow.camera.right = widthr;
+    dLightRef.current.shadow.camera.bottom = widthb;
     setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
-    scene.add(camHelp);
     console.log(camHelp);
-    //TODO fix infinite renders
+    if (camHelp?.parent) camHelp.parent.remove(camHelp);
+    scene.add(camHelp);
+    console.log(scene);
     return () => scene.remove(camHelp);
-  }, [top, left, right, camHelp]);
+  }, [widtht, widthb, widthr, widthl, dLightRef]);
+
+  // const fctCam = () => {
+  //   // console.log(dLightRef.current.shadow.camera);
+  //   dLightRef.current.shadow.camera.far = 7;
+  //   dLightRef.current.shadow.camera.top = 5;
+  //   dLightRef.current.shadow.camera.left = 5;
+  //   dLightRef.current.shadow.camera.right = 5;
+  //   dLightRef.current.shadow.camera.bottom = 5;
+
+  //   setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
+  //   // return () => scene.remove(camHelp);
+  //   scene.add(new THREE.CameraHelper(dLightRef.current.shadow.camera));
+  //   console.log(scene);
+  //   // scene.remove("CameraHelper");
+  // };
 
   //end light camera
   useHelper(dLightRef, DirectionalLightHelper, 5, "blue");

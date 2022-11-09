@@ -36,7 +36,7 @@ export const Setup = ({
             <pointLight intensity={1} position={[0, 6, 0]} />
           </>
         )}
-        <fog attach='fog' args={[theme, 0, 40]} />
+        <fog attach='fog' args={[theme, 30, 40]} />
         {ground && (
           <Plane
             position={[0, -0.1, 0]}
