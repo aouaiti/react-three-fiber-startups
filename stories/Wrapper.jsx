@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Vector3 } from "three";
+import { Vector3, PCFSoftShadowMap } from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Plane } from "@react-three/drei";
 
@@ -25,7 +25,7 @@ export const Setup = ({
       }}
     >
       <Canvas
-        shadows
+        shadows={{ type: PCFSoftShadowMap }}
         camera={{ position: cameraPosition, fov: cameraFov }}
         {...restProps}
       >
@@ -36,7 +36,7 @@ export const Setup = ({
             <pointLight intensity={1} position={[0, 6, 0]} />
           </>
         )}
-        <fog attach='fog' args={[theme, 30, 40]} />
+        <fog attach='fog' args={[theme, 1, 15]} />
         {ground && (
           <Plane
             position={[0, -0.001, 0]}
