@@ -94,7 +94,7 @@ const Template = function HauntedHouse(...args) {
   const Graves = () => {
     const GravesCreator = useCallback(() => {
       const r = Math.random() * Math.PI * 2;
-      const s = 5 + Math.random() * 5;
+      const s = 4 + Math.random() * 3;
       const rotY = (Math.random() - 0.5) * 0.4;
       const rotX = (Math.random() - 0.5) * 0.4;
       return (
@@ -139,7 +139,10 @@ const Template = function HauntedHouse(...args) {
     return (
       <mesh ref={floor} receiveShadow rotation-x={-Math.PI / 2}>
         <planeBufferGeometry args={[20, 20]} />
-        <meshStandardMaterial {...textures} />
+        <meshStandardMaterial
+          {...textures}
+          normalMap-encoding={LinearEncoding}
+        />
       </mesh>
     );
   };
