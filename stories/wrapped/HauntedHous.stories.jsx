@@ -1,7 +1,13 @@
-import { Box, Cone } from "@react-three/drei";
-import { CameraHelper } from "three";
+import { Box, Cone, Plane, useHelper, useTexture } from "@react-three/drei";
+import {
+  CameraHelper,
+  RepeatWrapping,
+  PointLightHelper,
+  LinearEncoding,
+  BufferAttribute,
+} from "three";
 import { Setup } from "../Wrapper";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 
 export default {
   title: "3jsJourney/hauntedHouse",
@@ -37,8 +43,10 @@ const Template = function HauntedHouse(...args) {
     );
   };
   const Lights = () => {
-    // const dLight = useRef();
     const [dLight, set] = useState();
+    const shadowCam = useRef();
+    useHelper(shadowCam, CameraHelper);
+    console.log(dLight);
     return (
       <>
         <ambientLight intensity={0.3} />
@@ -47,9 +55,20 @@ const Template = function HauntedHouse(...args) {
           position={[5, 7, -1]}
           color={"#c9c9c9"}
           intensity={1}
-          castShadow
+          // castShadow
+          shadow-mapSize-height={256}
+          shadow-mapSize-width={256}
         >
-          {dLight && <directionalLightHelper args={[dLight, 5]} />}
+          {dLight && <directionalLightHelper args={[dLight, 1]} />}
+          {/* <orthographicCamera
+            ref={shadowCam}
+            attach="shadow-camera"
+            top={10}
+            left={-10}
+            right={10}
+            bottom={-10}
+            far={15}
+          /> */}
         </directionalLight>
       </>
     );
@@ -80,11 +99,67 @@ const Template = function HauntedHouse(...args) {
       </>
     );
   };
+  const Floor = () => {
+    return (
+      <mesh receiveShadow>
+        <cylinderBufferGeometry args={[10, 5, 0, 32]} position={[0, 5, 0]} />
+        <meshStandardMaterial />
+      </mesh>
+    );
+  };
+  const Door = () => {
+    const pLight = useRef();
+    const door = useRef();
+    const shadowCam = useRef();
+    useHelper(shadowCam, CameraHelper);
+    useEffect(() => {
+      door.current.geometry.setAttribute(
+        "uv2",
+        new BufferAttribute(door.current.geometry.attributes.uv.array, 2)
+      );
+    }, [door]);
+    useHelper(pLight, PointLightHelper, 1);
+    const textures = useTexture({
+      alphaMap: "/textures/door/alpha.jpg",
+      aoMap: "/textures/door/ambientOcclusion.jpg",
+      map: "/textures/door/color.jpg",
+      displacementMap: "/textures/door/height.jpg",
+      metalnessMap: "/textures/door/metalness.jpg",
+      normalMap: "/textures/door/normal.jpg",
+      roughnessMap: "/textures/door/roughness.jpg",
+    });
+    return (
+      <>
+        <Plane ref={door} args={[2, 2, 32, 32]} position={[0, 1, 2.1]}>
+          <meshStandardMaterial
+            {...textures}
+            transparent
+            displacementScale={[0.2]}
+            normalMap-encoding={LinearEncoding}
+            // aoMapIntensity={[2]}
+            // wireframe={true}
+          />
+        </Plane>
+        <pointLight
+          ref={pLight}
+          position={[0, 2, 3]}
+          intensity={[1]}
+          color={"yellow"}
+          decay={[1]}
+          castShadow
+        >
+          <perspectiveCamera ref={shadowCam} attach="shadow-camera" far={10} />
+        </pointLight>
+      </>
+    );
+  };
   return (
     <>
       <House />
       <Lights />
       <Graves />
+      <Floor />
+      <Door />
     </>
   );
 };
