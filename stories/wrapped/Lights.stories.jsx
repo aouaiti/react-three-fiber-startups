@@ -3,9 +3,8 @@ import { Setup } from "../Wrapper";
 import { Box, useHelper } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
 import { DirectionalLightHelper, CameraHelper } from "three";
-import { useRef, useEffect, useState } from "react";
-import { useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { useRef, useState } from "react";
+import { useThree, useFrame } from "@react-three/fiber";
 import { useControls, folder } from "leva";
 
 export default {
@@ -50,12 +49,12 @@ const animateBox = {
 
 const DLight = ({ top, left, right, bottom }) => {
   const { widtht, widthl, widthr, widthb } = useControls({
-    camera: folder({
+    shadowCamera: folder({
       widtht: {
         value: 5,
-        min: 1,
+        min: 0.5,
         max: 5,
-        step: 0.5,
+        step: 0.1,
         // onChange: (v) => {
         //   fctCam();
         // },
@@ -63,8 +62,8 @@ const DLight = ({ top, left, right, bottom }) => {
       widthb: {
         value: -5,
         min: -5,
-        max: -1,
-        step: 0.5,
+        max: -0.5,
+        step: 0.1,
         // onChange: (v) => {
         //   fctCam();
         // },
@@ -72,17 +71,17 @@ const DLight = ({ top, left, right, bottom }) => {
       widthl: {
         value: -5,
         min: -5,
-        max: -1,
-        step: 0.5,
+        max: -0.5,
+        step: 0.1,
         // onChange: (v) => {
         //   fctCam();
         // },
       },
       widthr: {
         value: 5,
-        min: 1,
+        min: 0.5,
         max: 5,
-        step: 0.5,
+        step: 0.1,
         // onChange: (v) => {
         //   fctCam();
         // },
@@ -92,30 +91,34 @@ const DLight = ({ top, left, right, bottom }) => {
 
   const dLightRef = useRef(null);
   const [camHelp, setCamHelp] = useState();
+  const shadowCam = useRef();
   // if (dLightRef.current) dLightRef.current.shadow.camera.top = width;
   //currently (as far as i know) there is no drei or fiber elem that represents light's camera
   //so i used the imperative threejs way by extracting the scene element from the useThree hook
   //begin light camera
   const { scene } = useThree();
 
-  useEffect(() => {
-    scene.remove(camHelp);
-    dLightRef.current.shadow.camera.far = 7;
-    dLightRef.current.shadow.camera.top = widtht;
-    dLightRef.current.shadow.camera.left = widthl;
-    dLightRef.current.shadow.camera.right = widthr;
-    dLightRef.current.shadow.camera.bottom = widthb;
-    setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
-    console.log(camHelp);
-    if (camHelp?.parent) camHelp.parent.remove(camHelp);
-    scene.add(camHelp);
-    console.log(scene);
-    return () => scene.remove(camHelp);
-  }, [widtht, widthb, widthr, widthl, dLightRef]);
+  // useEffect(() => {
+  //   scene.remove(camHelp);
+  //   dLightRef.current.shadow.camera.far = 7;
+  //   dLightRef.current.shadow.camera.top = widtht;
+  //   dLightRef.current.shadow.camera.left = widthl;
+  //   dLightRef.current.shadow.camera.right = widthr;
+  //   dLightRef.current.shadow.camera.bottom = widthb;
+  //   setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
+  //   console.log(camHelp);
+  //   if (camHelp?.parent) camHelp.parent.remove(camHelp);
+  //   scene.add(camHelp);
+  //   console.log(scene);
+  //   return () => scene.remove(camHelp);
+  // }, [widtht, widthb, widthr, widthl, dLightRef]);
 
   //end light camera
-  useHelper(dLightRef, DirectionalLightHelper, 5, "blue");
-  // useFrame((state) => console.log(state));
+  useHelper(dLightRef, DirectionalLightHelper, 1, "blue");
+  useHelper(shadowCam, CameraHelper);
+  useFrame((gl) => {
+    shadowCam.current.updateProjectionMatrix();
+  });
   return (
     <motion.group
       animate={{ type: "tween", rotateY: Math.PI * 2 }}
@@ -125,12 +128,21 @@ const DLight = ({ top, left, right, bottom }) => {
         ref={dLightRef}
         position={[-4, 1, 0]}
         variants={animateSpot}
-        initial='init'
+        initial="init"
         // animate="animate"
         castShadow
         // animate={{ x: 4 }}
         transition={{ duration: 6 }}
-      />
+      >
+        <orthographicCamera
+          ref={shadowCam}
+          attach="shadow-camera"
+          top={widtht}
+          left={widthl}
+          right={widthr}
+          bottom={widthb}
+        />
+      </motion.directionalLight>
     </motion.group>
   );
 };
@@ -144,9 +156,9 @@ const Template = function LightsScene(...args) {
     <>
       <ambientLight intensity={0.5} color={"white"} />
       <motion.group
-        position={[0.5, 0.5, 0.5]}
+        position={[0, 0.5, 0]}
         variants={animateBox}
-        animate='animate'
+        animate="animate"
         transition={{ duration: 1, flip: Infinity }}
       >
         <Box position={[0, 0, 0]} scale={0.5} castShadow receiveShadow>
