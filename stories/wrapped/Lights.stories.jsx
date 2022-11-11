@@ -47,10 +47,10 @@ const animateBox = {
   },
 };
 
-const DLight = ({ top, left, right, bottom }) => {
-  const { widtht, widthl, widthr, widthb } = useControls({
+const DLight = () => {
+  const { top, left, right, bottom, far } = useControls({
     shadowCamera: folder({
-      widtht: {
+      top: {
         value: 5,
         min: 0.5,
         max: 5,
@@ -59,7 +59,7 @@ const DLight = ({ top, left, right, bottom }) => {
         //   fctCam();
         // },
       },
-      widthb: {
+      bottom: {
         value: -5,
         min: -5,
         max: -0.5,
@@ -68,7 +68,7 @@ const DLight = ({ top, left, right, bottom }) => {
         //   fctCam();
         // },
       },
-      widthl: {
+      left: {
         value: -5,
         min: -5,
         max: -0.5,
@@ -77,10 +77,19 @@ const DLight = ({ top, left, right, bottom }) => {
         //   fctCam();
         // },
       },
-      widthr: {
+      right: {
         value: 5,
         min: 0.5,
         max: 5,
+        step: 0.1,
+        // onChange: (v) => {
+        //   fctCam();
+        // },
+      },
+      far: {
+        value: 10,
+        min: 1,
+        max: 50,
         step: 0.1,
         // onChange: (v) => {
         //   fctCam();
@@ -97,21 +106,6 @@ const DLight = ({ top, left, right, bottom }) => {
   //so i used the imperative threejs way by extracting the scene element from the useThree hook
   //begin light camera
   const { scene } = useThree();
-
-  // useEffect(() => {
-  //   scene.remove(camHelp);
-  //   dLightRef.current.shadow.camera.far = 7;
-  //   dLightRef.current.shadow.camera.top = widtht;
-  //   dLightRef.current.shadow.camera.left = widthl;
-  //   dLightRef.current.shadow.camera.right = widthr;
-  //   dLightRef.current.shadow.camera.bottom = widthb;
-  //   setCamHelp(new THREE.CameraHelper(dLightRef.current.shadow.camera));
-  //   console.log(camHelp);
-  //   if (camHelp?.parent) camHelp.parent.remove(camHelp);
-  //   scene.add(camHelp);
-  //   console.log(scene);
-  //   return () => scene.remove(camHelp);
-  // }, [widtht, widthb, widthr, widthl, dLightRef]);
 
   //end light camera
   useHelper(dLightRef, DirectionalLightHelper, 1, "blue");
@@ -137,10 +131,11 @@ const DLight = ({ top, left, right, bottom }) => {
         <orthographicCamera
           ref={shadowCam}
           attach="shadow-camera"
-          top={widtht}
-          left={widthl}
-          right={widthr}
-          bottom={widthb}
+          top={top}
+          left={left}
+          right={right}
+          bottom={bottom}
+          far={far}
         />
       </motion.directionalLight>
     </motion.group>
