@@ -3,7 +3,7 @@ import { Setup } from "../Wrapper";
 import { Stars } from "@react-three/drei";
 
 export default {
-  title: "Staging/Stars",
+  title: "Staging/Basic Setup",
   component: Stars,
   decorators: [
     (storyFn, context) => (

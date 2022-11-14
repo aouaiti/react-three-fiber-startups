@@ -9,6 +9,7 @@ export const Setup = ({
   global,
   axes,
   grid,
+  fog = true,
   cameraFov = 75,
   cameraPosition = new Vector3(4.5, 2.5, 4.5),
   controls = true,
@@ -36,7 +37,7 @@ export const Setup = ({
             <pointLight intensity={1} position={[0, 6, 0]} />
           </>
         )}
-        <fog attach='fog' args={[theme, 1, 15]} />
+        {fog && <fog attach="fog" args={[theme, 1, 15]} />}
         {ground && (
           <Plane
             position={[0, -0.001, 0]}
