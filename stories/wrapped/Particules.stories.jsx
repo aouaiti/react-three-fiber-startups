@@ -1,9 +1,9 @@
 import { Setup } from "../Wrapper";
 import { Box, useTexture } from "@react-three/drei";
 import { DynamicDrawUsage, AdditiveBlending } from "three";
-import { useRef, Suspense } from "react";
-import * as THREE from "three";
+import { useRef, Suspense, useEffect } from "react";
 import { useControls, folder } from "leva";
+import { useFrame } from "@react-three/fiber";
 
 export default {
   title: "Particules/general",
@@ -39,8 +39,14 @@ const urls = {
   model13: "/particules/13.png",
 };
 
+const geometries = {
+  geometry1: "fibonacci sphere",
+  geometry2: "stairs",
+  geometry3: "energy",
+};
+
 const Fragments = () => {
-  const [{ count, url, size, colorize }, set] = useControls(
+  const [{ count, url, size, colorize, geometry }, set] = useControls(
     "particles",
     () => ({
       props: folder({
@@ -53,6 +59,9 @@ const Fragments = () => {
         url: {
           options: urls,
         },
+        geometry: {
+          options: geometries,
+        },
         size: {
           value: 0.2,
           min: 0.1,
@@ -64,18 +73,60 @@ const Fragments = () => {
     })
   );
   //   const count = 5000;
+  const points = useRef();
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
-  for (let i = 0; i < count * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 10;
-    colors[i] = Math.random();
-  }
+  const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians
+  useEffect(() => {
+    if (geometry === "stairs") {
+      for (let i = 0; i < count * 3; i += 3) {
+        const rdm = Math.random();
+        positions[i] = Math.cos(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        positions[i + 1] = (rdm - 0.5) * 15;
+        positions[i + 2] =
+          Math.sin(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        colors[i] = Math.random();
+        colors[i + 1] = Math.random();
+        colors[i + 2] = Math.random();
+      }
+    }
+    if (geometry === "fibonacci sphere") {
+      for (let i = 0; i < count * 3; i += 3) {
+        // const rdm = Math.random();
+        const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
+        const radius = Math.sqrt(1 - y * y); // radius at y
+        const theta = phi * i; // golden angle increment
+        positions[i] = Math.cos(theta) * radius * 10;
+        positions[i + 1] = y * 10;
+        positions[i + 2] = Math.sin(theta) * radius * 10;
+        colors[i] = Math.random();
+        colors[i + 1] = Math.random();
+        colors[i + 2] = Math.random();
+      }
+    }
+    if (geometry === "energy") {
+      for (let i = 0; i < count * 3; i += 3) {
+        const rdm = Math.random();
+        positions[i] = Math.cos(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        positions[i + 1] = Math.tan(rdm * Math.PI * 2);
+        positions[i + 2] =
+          Math.sin(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        colors[i] = Math.random();
+        colors[i + 1] = Math.random();
+        colors[i + 2] = Math.random();
+      }
+    }
+  }, [geometry, count, size, url, colorize]);
   const textures = useTexture({
     map: url,
     alphaMap: url,
   });
+  useFrame(() => {
+    points.current.geometry.attributes.position.needsUpdate = true;
+    points.current.geometry.attributes.color.needsUpdate = true;
+  });
   return (
-    <points>
+    <points ref={points}>
       <bufferGeometry attach="geometry">
         <bufferAttribute
           attach="attributes-position"
@@ -100,7 +151,7 @@ const Fragments = () => {
         {...textures}
         vertexColors={colorize}
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={AdditiveBlending}
       />
     </points>
   );
@@ -110,7 +161,6 @@ const Template = function Particules(...args) {
   console.log(args);
   return (
     <Suspense>
-      {/* <Box></Box> */}
       <Fragments />
     </Suspense>
   );
