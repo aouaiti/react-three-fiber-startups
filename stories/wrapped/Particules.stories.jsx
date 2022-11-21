@@ -40,44 +40,66 @@ const urls = {
 };
 
 const geometries = {
+  galaxy: "galaxy",
   fibonacciSphere: "fibonacci sphere",
   stairs: "stairs",
   energy: "energy",
-  galaxy: "galaxy",
 };
 
 const Fragments = () => {
-  const { count, url, size, geometry, branches } = useControls("particles", {
-    props: folder({
-      count: {
-        value: 10000,
-        min: 100,
-        max: 10000,
-        step: 100,
-      },
-      url: {
-        options: urls,
-      },
-      geometry: {
-        options: geometries,
-      },
-      size: {
-        value: 0.2,
-        min: 0.1,
-        max: 1,
-        step: 0.01,
-      },
-    }),
-    galaxy: folder({
-      branches: {
-        value: 3,
-        min: 2,
-        max: 10,
-        step: 1,
-        render: (get) => get("particles.props.geometry") === "galaxy",
-      },
-    }),
-  });
+  const { count, url, size, geometry, branches, angle, rfactor, centering } =
+    useControls("particles", {
+      props: folder({
+        count: {
+          value: 20000,
+          min: 100,
+          max: 20000,
+          step: 100,
+        },
+        url: {
+          options: urls,
+        },
+        geometry: {
+          options: geometries,
+        },
+        size: {
+          value: 0.2,
+          min: 0.1,
+          max: 1,
+          step: 0.01,
+        },
+      }),
+      galaxy: folder({
+        branches: {
+          value: 3,
+          min: 2,
+          max: 10,
+          step: 1,
+          render: (get) => get("particles.props.geometry") === "galaxy",
+        },
+        angle: {
+          value: 1,
+          min: -2,
+          max: 2,
+          step: 0.1,
+          render: (get) => get("particles.props.geometry") === "galaxy",
+        },
+        rfactor: {
+          value: 1,
+          min: 0,
+          max: 2,
+          step: 0.1,
+          render: (get) => get("particles.props.geometry") === "galaxy",
+        },
+        centering: {
+          value: 3,
+          min: 1,
+          max: 6,
+          step: 1,
+          render: (get) => get("particles.props.geometry") === "galaxy",
+        },
+      }),
+    });
   //   const count = 5000;
   const points = useRef();
   const positions = new Float32Array(count * 3);
@@ -128,16 +150,33 @@ const Fragments = () => {
         const i3 = i * 3;
         const rdm = ((i % branches) / branches) * Math.PI * 2;
         const radius = Math.random() * 10;
-        if (i < 20) console.log(rdm);
-        positions[i3] = Math.cos(rdm) * radius;
-        positions[i3 + 1] = 0;
-        positions[i3 + 2] = Math.sin(rdm) * radius;
+        const a = angle * radius;
+        // randomize tentacles' width and height while widening the center
+        const randomX =
+          Math.pow(Math.random(), centering) *
+          rfactor *
+          Math.abs(radius - 10) *
+          (Math.random() < 0.5 ? -1 : 1);
+        const randomY =
+          Math.pow(Math.random(), centering) *
+          0.5 *
+          (Math.random() < 0.5 ? -1 : 1);
+        const randomZ =
+          Math.pow(Math.random(), centering) *
+          rfactor *
+          Math.abs(radius - 10) *
+          (Math.random() < 0.5 ? -1 : 1);
+        //position
+        positions[i3] = Math.cos(rdm + a) * radius + randomX;
+        positions[i3 + 1] = randomY;
+        positions[i3 + 2] = Math.sin(rdm + a) * radius + randomZ;
+        // color
         colors[i] = Math.random();
         colors[i + 1] = Math.random();
         colors[i + 2] = Math.random();
       }
     }
-  }, [geometry, count, size, url, branches]);
+  }, [geometry, count, size, url, branches, angle, rfactor, centering]);
   const textures = useTexture({
     map: url,
     alphaMap: url,
@@ -170,7 +209,7 @@ const Fragments = () => {
         sizeAttenuation={true}
         transparent
         {...textures}
-        vertexColors
+        // vertexColors
         depthWrite={false}
         blending={AdditiveBlending}
       />
@@ -199,3 +238,37 @@ Particules.parameters = {
 };
 
 Particules.storyName = "Particules";
+
+// tornadoo
+// if (geometry === "galaxy") {
+//     for (let i = 0; i < count; i++) {
+//       // const branches = 4;
+//       const i3 = i * 3;
+//       const rdm = ((i % branches) / branches) * Math.PI * 2;
+//       const radius = Math.random() * 10;
+//       const a = angle * radius;
+//       positions[i3] = Math.cos(rdm + a) * radius;
+//       positions[i3 + 1] = rdm + radius; //////////////////////// here
+//       positions[i3 + 2] = Math.sin(rdm + a) * radius;
+//       colors[i] = Math.random();
+//       colors[i + 1] = Math.random();
+//       colors[i + 2] = Math.random();
+//     }
+//   }
+
+// fire
+// if (geometry === "galaxy") {
+//     for (let i = 0; i < count; i++) {
+//       // const branches = 4;
+//       const i3 = i * 3;
+//       const rdm = ((i % branches) / branches) * Math.PI * 2;
+//       const radius = Math.random() * 10;
+//       const a = angle * radius;
+//       positions[i3] = Math.cos(rdm + a) * radius;
+//       positions[i3 + 1] = rdm * radius; //////////////////////// here
+//       positions[i3 + 2] = Math.sin(rdm + a) * radius;
+//       colors[i] = Math.random();
+//       colors[i + 1] = Math.random();
+//       colors[i + 2] = Math.random();
+//     }
+//   }
