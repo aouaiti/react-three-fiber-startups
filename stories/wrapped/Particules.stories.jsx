@@ -1,6 +1,6 @@
 import { Setup } from "../Wrapper";
 import { Box, useTexture } from "@react-three/drei";
-import { DynamicDrawUsage, AdditiveBlending } from "three";
+import { DynamicDrawUsage, AdditiveBlending, Vector3, Color } from "three";
 import { useRef, Suspense, useEffect } from "react";
 import { useControls, folder } from "leva";
 import { useFrame } from "@react-three/fiber";
@@ -15,6 +15,7 @@ export default {
         ground={Particules.args.ground}
         axes={Particules.args.axes}
         grid={Particules.args.grid}
+        cameraPosition={new Vector3(10, 10, 10)}
         fog={false}
       >
         {storyFn()}
@@ -47,64 +48,86 @@ const geometries = {
 };
 
 const Fragments = () => {
-  const { count, url, size, geometry, branches, angle, rfactor, centering } =
-    useControls("particles", {
-      props: folder({
-        count: {
-          value: 20000,
-          min: 100,
-          max: 20000,
-          step: 100,
-        },
-        url: {
-          options: urls,
-        },
-        geometry: {
-          options: geometries,
-        },
-        size: {
-          value: 0.2,
-          min: 0.1,
-          max: 1,
-          step: 0.01,
-        },
-      }),
-      galaxy: folder({
-        branches: {
-          value: 3,
-          min: 2,
-          max: 10,
-          step: 1,
-          render: (get) => get("particles.props.geometry") === "galaxy",
-        },
-        angle: {
-          value: 1,
-          min: -2,
-          max: 2,
-          step: 0.1,
-          render: (get) => get("particles.props.geometry") === "galaxy",
-        },
-        rfactor: {
-          value: 1,
-          min: 0,
-          max: 2,
-          step: 0.1,
-          render: (get) => get("particles.props.geometry") === "galaxy",
-        },
-        centering: {
-          value: 3,
-          min: 1,
-          max: 6,
-          step: 1,
-          render: (get) => get("particles.props.geometry") === "galaxy",
-        },
-      }),
-    });
+  const {
+    count,
+    url,
+    size,
+    geometry,
+    branches,
+    angle,
+    rfactor,
+    centering,
+    insideColor,
+    outsideColor,
+  } = useControls("particles", {
+    props: folder({
+      count: {
+        value: 20000,
+        min: 100,
+        max: 20000,
+        step: 100,
+      },
+      url: {
+        options: urls,
+      },
+      geometry: {
+        options: geometries,
+      },
+      size: {
+        value: 0.2,
+        min: 0.1,
+        max: 1,
+        step: 0.01,
+      },
+    }),
+    galaxy: folder({
+      branches: {
+        value: 10,
+        min: 2,
+        max: 10,
+        step: 1,
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+      angle: {
+        value: 0.6,
+        min: -2,
+        max: 2,
+        step: 0.1,
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+      rfactor: {
+        value: 0.1,
+        min: 0,
+        max: 2,
+        step: 0.1,
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+      centering: {
+        value: 1,
+        min: 1,
+        max: 6,
+        step: 1,
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+      insideColor: {
+        value: "#fff",
+        label: "inside color",
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+      outsideColor: {
+        value: "#fff",
+        label: "outside color",
+        render: (get) => get("particles.props.geometry") === "galaxy",
+      },
+    }),
+  });
   //   const count = 5000;
   const points = useRef();
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians
+  const iCol = new Color(insideColor);
+  const oCol = new Color(outsideColor);
   useEffect(() => {
     if (geometry === "stairs") {
       for (let i = 0; i < count * 3; i += 3) {
@@ -149,34 +172,51 @@ const Fragments = () => {
         // const branches = 4;
         const i3 = i * 3;
         const rdm = ((i % branches) / branches) * Math.PI * 2;
-        const radius = Math.random() * 10;
+        const radius = Math.pow(Math.random(), 2) * 10;
         const a = angle * radius;
         // randomize tentacles' width and height while widening the center
         const randomX =
-          Math.pow(Math.random(), centering) *
-          rfactor *
-          Math.abs(radius - 10) *
+          ((Math.pow(Math.random(), centering) *
+            rfactor *
+            Math.abs(radius - 10)) /
+            2) *
           (Math.random() < 0.5 ? -1 : 1);
         const randomY =
-          Math.pow(Math.random(), centering) *
-          0.5 *
-          (Math.random() < 0.5 ? -1 : 1);
+          (Math.pow(Math.random(), centering) *
+            0.5 *
+            (Math.random() < 0.5 ? -1 : 1) *
+            Math.abs(radius - 10)) /
+          5;
         const randomZ =
-          Math.pow(Math.random(), centering) *
-          rfactor *
-          Math.abs(radius - 10) *
+          ((Math.pow(Math.random(), centering) *
+            rfactor *
+            Math.abs(radius - 10)) /
+            2) *
           (Math.random() < 0.5 ? -1 : 1);
         //position
         positions[i3] = Math.cos(rdm + a) * radius + randomX;
         positions[i3 + 1] = randomY;
         positions[i3 + 2] = Math.sin(rdm + a) * radius + randomZ;
         // color
-        colors[i] = Math.random();
-        colors[i + 1] = Math.random();
-        colors[i + 2] = Math.random();
+        const mixColor = iCol.clone();
+        mixColor.lerp(oCol, 0.5);
+        colors[i3] = mixColor.r;
+        colors[i3 + 1] = mixColor.g;
+        colors[i3 + 2] = mixColor.b;
       }
     }
-  }, [geometry, count, size, url, branches, angle, rfactor, centering]);
+  }, [
+    geometry,
+    count,
+    size,
+    url,
+    branches,
+    angle,
+    rfactor,
+    centering,
+    insideColor,
+    outsideColor,
+  ]);
   const textures = useTexture({
     map: url,
     alphaMap: url,
@@ -209,7 +249,7 @@ const Fragments = () => {
         sizeAttenuation={true}
         transparent
         {...textures}
-        // vertexColors
+        vertexColors
         depthWrite={false}
         blending={AdditiveBlending}
       />

@@ -1,0 +1,18 @@
+.section1,
+.section2,
+.section3 {
+  width: 100vw;
+  height: 100vh;
+  background: green;
+  display: flex;
+  justify-content: center;
+}
+.section2 {
+  align-items: flex-start;
+}
+.section2 {
+  align-items: flex-end;
+}
+.section3 {
+  align-items: flex-start;
+}

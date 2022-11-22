@@ -2,8 +2,11 @@ import * as React from "react";
 import { Vector3, PCFSoftShadowMap } from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Plane } from "@react-three/drei";
+import styles from "./wrapper.module.css";
 
 export const Setup = ({
+  transparent = false,
+  dom = false,
   children,
   ground,
   global,
@@ -18,44 +21,61 @@ export const Setup = ({
 }) => {
   const theme = global.theme === "light" ? "#fff" : "#121212";
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        // background: "#000",
-      }}
-    >
-      <Canvas
-        shadows={{ type: PCFSoftShadowMap }}
-        camera={{ position: cameraPosition, fov: cameraFov }}
-        {...restProps}
+    <>
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          position: "fixed",
+          // background: "#000",
+        }}
       >
-        {children}
-        {lights && (
-          <>
-            <ambientLight intensity={0.8} />
-            <pointLight intensity={1} position={[0, 6, 0]} />
-          </>
-        )}
-        {fog && <fog attach="fog" args={[theme, 1, 15]} />}
-        {ground && (
-          <Plane
-            position={[0, -0.001, 0]}
-            rotation-x={-Math.PI / 2}
-            args={[100, 100, 1, 1]}
-            receiveShadow
-          >
-            <meshStandardMaterial color={theme} wireframe={false} />
-          </Plane>
-        )}
-        {axes && <axesHelper args={[10]} />}
-        {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
+        <Canvas
+          gl={{ alpha: true }}
+          shadows={{ type: PCFSoftShadowMap }}
+          camera={{ position: cameraPosition, fov: cameraFov }}
+          {...restProps}
+        >
+          {children}
+          {lights && (
+            <>
+              <ambientLight intensity={0.8} />
+              <pointLight intensity={1} position={[0, 6, 0]} />
+            </>
+          )}
+          {fog && <fog attach="fog" args={[theme, 1, 15]} />}
+          {ground && (
+            <Plane
+              position={[0, -0.001, 0]}
+              rotation-x={-Math.PI / 2}
+              args={[100, 100, 1, 1]}
+              receiveShadow
+            >
+              <meshStandardMaterial color={theme} wireframe={false} />
+            </Plane>
+          )}
+          {axes && <axesHelper args={[10]} />}
+          {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
       <planeBufferGeometry attach="geometry" args={[20, 20]} />
       <meshBasicMaterial attach="material" color="#121212" />
     </mesh> */}
-        {/* {grid && <gridHelper args={[30, 30]} position={[0, -0.001, 0]} />} */}
-        {controls && <OrbitControls makeDefault />}
-      </Canvas>
-    </div>
+          {grid && <gridHelper args={[30, 30]} position={[0, 0.1, 0]} />}
+          {controls && <OrbitControls makeDefault />}
+        </Canvas>
+      </div>
+      {dom && (
+        <div>
+          <div className={styles.section1}>
+            <h2>Section 1</h2>
+          </div>
+          <div className={styles.section2}>
+            <h2>Section 2</h2>
+          </div>
+          <div className={styles.section3}>
+            <h2>Section 3</h2>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
