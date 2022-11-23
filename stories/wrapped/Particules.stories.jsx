@@ -25,19 +25,19 @@ export default {
 };
 
 const urls = {
-  star1: "/particules/8.png",
-  star2: "/particules/5.png",
-  star3: "/particules/11.png",
-  star4: "/particules/9.png",
-  star5: "/particules/4.png",
-  lense: "/particules/1.png",
-  ring1: "/particules/2.png",
-  ring2: "/particules/7.png",
-  smoke: "/particules/3.png",
-  arc: "/particules/6.png",
-  heart: "/particules/10.png",
-  line1: "/particules/12.png",
-  line2: "/particules/13.png",
+  star1: "/particles/8.png",
+  star2: "/particles/5.png",
+  star3: "/particles/11.png",
+  star4: "/particles/9.png",
+  star5: "/particles/4.png",
+  lense: "/particles/1.png",
+  ring1: "/particles/2.png",
+  ring2: "/particles/7.png",
+  smoke: "/particles/3.png",
+  arc: "/particles/6.png",
+  heart: "/particles/10.png",
+  line1: "/particles/12.png",
+  line2: "/particles/13.png",
 };
 
 const geometries = {
@@ -270,7 +270,7 @@ export const Particules = Template.bind();
 Particules.args = {
   ground: false,
   axes: true,
-  grid: true,
+  grid: false,
 };
 
 Particules.parameters = {

@@ -1,18 +1,30 @@
 .section1,
 .section2,
 .section3 {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  background: green;
   display: flex;
   justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.section1 {
+  justify-content: flex-start;
+  align-items: center;
 }
 .section2 {
-  align-items: flex-start;
-}
-.section2 {
-  align-items: flex-end;
+  justify-content: flex-end;
+  align-items: center;
 }
 .section3 {
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
+}
+.text {
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
+}
+html {
+  background: #1e1a20;
 }

@@ -20,6 +20,7 @@ export const Setup = ({
   ...restProps
 }) => {
   const theme = global.theme === "light" ? "#fff" : "#121212";
+
   return (
     <>
       <div
@@ -66,13 +67,13 @@ export const Setup = ({
       {dom && (
         <div>
           <div className={styles.section1}>
-            <h2>Section 1</h2>
+            <p className={styles.text}>Section 1</p>
           </div>
           <div className={styles.section2}>
-            <h2>Section 2</h2>
+            <p className={styles.text}>Section 2</p>
           </div>
           <div className={styles.section3}>
-            <h2>Section 3</h2>
+            <p className={styles.text}>Section 3</p>
           </div>
         </div>
       )}

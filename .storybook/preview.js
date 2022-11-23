@@ -31,7 +31,7 @@ export const globalTypes = {
     defaultValue: "dark",
     toolbar: {
       icon: "lightning",
-      items: ["dark", "light"],
+      items: ["dark", "light", "transparent"],
       // showName: true,
     },
   },
@@ -39,7 +39,12 @@ export const globalTypes = {
 
 export const decorators = [
   (Story, context) => {
-    const theme = context.globals.theme === "light" ? "white" : "#000";
+    const theme =
+      context.globals.theme === "light"
+        ? "white"
+        : context.globals.theme === "dark"
+        ? "black"
+        : "transparent";
     return (
       <div
         style={{
