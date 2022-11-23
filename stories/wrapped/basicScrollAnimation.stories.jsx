@@ -52,13 +52,13 @@ const AnimatedBox = () => {
   const wheelEvent = useCallback(
     (e) => {
       const s = scrollYProgress.get();
-      if (s < 0.33) {
+      if (s < 0.11 && sectionNumber !== 0) {
         setSectionNumber(0);
       }
-      if (s >= 0.66) {
+      if (s >= 0.88 && sectionNumber !== 2) {
         setSectionNumber(2);
       }
-      if (s >= 0.33 && s < 0.66) {
+      if (s >= 0.43 && s < 0.57 && sectionNumber !== 1) {
         setSectionNumber(1);
       }
       console.log(sectionNumber);
@@ -90,7 +90,7 @@ const AnimatedBox = () => {
 
   const boxMaterial = {
     initial: (x) => ({ color: x[0] }),
-    animate: (x) => ({ color: x[1] === sectionNumber ? "#888888" : x[0] }),
+    animate: (x) => ({ color: x[1] === sectionNumber ? "#ffffff" : x[0] }),
   };
   return (
     <>
@@ -100,15 +100,24 @@ const AnimatedBox = () => {
         variants={boxScale}
         initial="initial"
         animate="animate"
-        transition={{ duration: 0.5, flip: Infinity }}
+        transition={{
+          duration: 0.5,
+          repeat: sectionNumber === 2 ? 3 : 0,
+          repeatType: "mirror",
+        }}
         ref={box1}
+        custom={0}
         position={[1, 0, 0]}
       >
         <motion.meshStandardMaterial
           variants={boxMaterial}
           initial="initial"
           animate="animate"
-          transition={{ duration: 0.5, flip: Infinity }}
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 0 ? 3 : 0,
+            repeatType: "mirror",
+          }}
           custom={["#ff0000", 0]}
         />
         <boxBufferGeometry />
@@ -118,15 +127,24 @@ const AnimatedBox = () => {
         variants={boxScale}
         initial="initial"
         animate="animate"
-        transition={{ duration: 0.5, flip: Infinity }}
+        transition={{
+          duration: 0.5,
+          repeat: sectionNumber === 2 ? 3 : 0,
+          repeatType: "mirror",
+        }}
         ref={box2}
+        custom={1}
         position={[-1, -6, 0]}
       >
         <motion.meshStandardMaterial
           variants={boxMaterial}
           initial="initial"
           animate="animate"
-          transition={{ duration: 0.5, flip: Infinity }}
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 1 ? 3 : 0,
+            repeatType: "mirror",
+          }}
           custom={["#0000ff", 1]}
         />
         <boxBufferGeometry />
@@ -136,15 +154,24 @@ const AnimatedBox = () => {
         variants={boxScale}
         initial="initial"
         animate="animate"
-        transition={{ duration: 0.5, flip: Infinity }}
+        transition={{
+          duration: 0.5,
+          repeat: sectionNumber === 2 ? 3 : 0,
+          repeatType: "mirror",
+        }}
         ref={box3}
+        custom={2}
         position={[1, -12, 0]}
       >
         <motion.meshStandardMaterial
           variants={boxMaterial}
           initial="initial"
           animate="animate"
-          transition={{ duration: 0.5, flip: Infinity }}
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 2 ? 3 : 0,
+            repeatType: "mirror",
+          }}
           custom={["#00ff00", 2]}
         />
         <boxBufferGeometry />
