@@ -50,7 +50,7 @@ const Material = ({ color, section, sectionNumber }) => {
       animate="animate"
       transition={{
         duration: 0.5,
-        repeat: sectionNumber === section ? 3 : 0,
+        repeat: sectionNumber === section ? 1 : 0,
         repeatType: "mirror",
       }}
       custom={[color, section]}
@@ -70,9 +70,9 @@ const AnimatedBox = () => {
   });
   const velocity = useVelocity(scrollYProgress);
   const springV = useSpring(velocity, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
+    stiffness: 30,
+    damping: 10,
+    mass: 3,
   });
   const box1 = useRef(null);
   const box2 = useRef(null);
@@ -98,22 +98,25 @@ const AnimatedBox = () => {
     return () => window.removeEventListener("scroll", wheelEvent);
   }, [wheelEvent]);
   const boxArr = [box1, box2, box3];
+  let previousTime = 0;
   useFrame((delta) => {
-    // console.log(delta.mouse);
+    const elapsedTime = delta.clock.elapsedTime;
+    const diff = elapsedTime - previousTime;
+    previousTime = elapsedTime;
+    // console.log(diff);
     const fps = delta.clock.oldTime - delta.clock.elapsedTime;
     const s = spring.get();
     const velo = springV.get() / 5;
-    const multiplier = 0.5;
     boxArr.map((x, i) => {
-      x.current.rotation.x = fps * 0.001 + velo;
-      x.current.rotation.y = fps * 0.0015 + velo;
+      x.current.rotation.x = fps * 0.001 + velo * 5;
+      x.current.rotation.y = fps * 0.0015 + velo * 5;
     });
     // cam.current.rotation.y = multiplier * -delta.mouse.x;
     // cam.current.rotation.x = multiplier * delta.mouse.y;
     const springX = delta.mouse.x;
     const springY = delta.mouse.y;
-    group.current.position.x += (springX - group.current.position.x) * 0.05;
-    group.current.position.y += (springY - group.current.position.y) * 0.05;
+    group.current.position.x += (springX - group.current.position.x) * 0.1;
+    group.current.position.y += (springY - group.current.position.y) * 0.1;
 
     cam.current.position.y = s * -12;
   });
