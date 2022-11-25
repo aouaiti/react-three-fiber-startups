@@ -1,4 +1,4 @@
-import { Box, PerspectiveCamera, Stars } from "@react-three/drei";
+import { Box, PerspectiveCamera, Stars, useTexture } from "@react-three/drei";
 import { Setup } from "../Wrapper";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useEffect, useCallback, useState } from "react";
@@ -9,7 +9,7 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { Vector3 } from "three";
+import { NearestFilter, Vector3 } from "three";
 import { motion } from "framer-motion-3d";
 
 export default {
@@ -31,8 +31,36 @@ export default {
   ],
 };
 
+const Material = ({ color, section, sectionNumber }) => {
+  const boxMaterial = {
+    initial: (x) => ({ color: x[0] }),
+    animate: (x) => ({ color: x[1] === sectionNumber ? "#ffffff" : x[0] }),
+  };
+  // const textures = useTexture({
+  //   gradientMap: "/textures/gradient/3.jpg",
+  // });
+  const texture = useTexture("/textures/gradient/3.jpg", (texture) => {
+    texture.magFilter = NearestFilter;
+  });
+  return (
+    <motion.meshToonMaterial
+      gradientMap={texture}
+      variants={boxMaterial}
+      initial="initial"
+      animate="animate"
+      transition={{
+        duration: 0.5,
+        repeat: sectionNumber === section ? 3 : 0,
+        repeatType: "mirror",
+      }}
+      custom={[color, section]}
+    />
+  );
+};
+
 const AnimatedBox = () => {
   const cam = useRef(null);
+  const group = useRef(null);
   const [sectionNumber, setSectionNumber] = useState(0);
   const { scrollYProgress } = useScroll();
   const spring = useSpring(scrollYProgress, {
@@ -71,30 +99,38 @@ const AnimatedBox = () => {
   }, [wheelEvent]);
   const boxArr = [box1, box2, box3];
   useFrame((delta) => {
+    // console.log(delta.mouse);
+    const fps = delta.clock.oldTime - delta.clock.elapsedTime;
     const s = spring.get();
     const velo = springV.get() / 5;
+    const multiplier = 0.5;
     boxArr.map((x, i) => {
-      x.current.rotation.x += 0.011 + velo;
-      x.current.rotation.y += 0.022 + velo;
+      x.current.rotation.x = fps * 0.001 + velo;
+      x.current.rotation.y = fps * 0.0015 + velo;
     });
+    // cam.current.rotation.y = multiplier * -delta.mouse.x;
+    // cam.current.rotation.x = multiplier * delta.mouse.y;
+    const springX = delta.mouse.x;
+    const springY = delta.mouse.y;
+    group.current.position.x += (springX - group.current.position.x) * 0.05;
+    group.current.position.y += (springY - group.current.position.y) * 0.05;
+
     cam.current.position.y = s * -12;
   });
   const boxScale = {
     initial: {
       scale: 1,
     },
-    animate: {
-      scale: 1.2,
-    },
+    animate: (x) => ({
+      scale: x === sectionNumber ? 1.2 : 1,
+    }),
   };
 
-  const boxMaterial = {
-    initial: (x) => ({ color: x[0] }),
-    animate: (x) => ({ color: x[1] === sectionNumber ? "#ffffff" : x[0] }),
-  };
   return (
     <>
-      <PerspectiveCamera ref={cam} makeDefault position={[0, 0, 6]} />
+      <group ref={group}>
+        <PerspectiveCamera ref={cam} makeDefault position={[0, 0, 6]} />
+      </group>
 
       <motion.mesh
         variants={boxScale}
@@ -102,25 +138,15 @@ const AnimatedBox = () => {
         animate="animate"
         transition={{
           duration: 0.5,
-          repeat: sectionNumber === 2 ? 3 : 0,
+          repeat: sectionNumber === 0 ? 3 : 0,
           repeatType: "mirror",
         }}
         ref={box1}
         custom={0}
         position={[1, 0, 0]}
       >
-        <motion.meshStandardMaterial
-          variants={boxMaterial}
-          initial="initial"
-          animate="animate"
-          transition={{
-            duration: 0.5,
-            repeat: sectionNumber === 0 ? 3 : 0,
-            repeatType: "mirror",
-          }}
-          custom={["#ff0000", 0]}
-        />
-        <boxBufferGeometry />
+        <Material color="#ff0000" section={0} sectionNumber={sectionNumber} />
+        <cylinderBufferGeometry args={[0.5, 0.5, 1, 32]} />
       </motion.mesh>
 
       <motion.mesh
@@ -129,25 +155,15 @@ const AnimatedBox = () => {
         animate="animate"
         transition={{
           duration: 0.5,
-          repeat: sectionNumber === 2 ? 3 : 0,
+          repeat: sectionNumber === 1 ? 3 : 0,
           repeatType: "mirror",
         }}
         ref={box2}
         custom={1}
         position={[-1, -6, 0]}
       >
-        <motion.meshStandardMaterial
-          variants={boxMaterial}
-          initial="initial"
-          animate="animate"
-          transition={{
-            duration: 0.5,
-            repeat: sectionNumber === 1 ? 3 : 0,
-            repeatType: "mirror",
-          }}
-          custom={["#0000ff", 1]}
-        />
-        <boxBufferGeometry />
+        <Material color="#0000ff" section={1} sectionNumber={sectionNumber} />
+        <torusBufferGeometry args={[0.6, 0.2, 16, 100]} />
       </motion.mesh>
 
       <motion.mesh
@@ -163,18 +179,8 @@ const AnimatedBox = () => {
         custom={2}
         position={[1, -12, 0]}
       >
-        <motion.meshStandardMaterial
-          variants={boxMaterial}
-          initial="initial"
-          animate="animate"
-          transition={{
-            duration: 0.5,
-            repeat: sectionNumber === 2 ? 3 : 0,
-            repeatType: "mirror",
-          }}
-          custom={["#00ff00", 2]}
-        />
-        <boxBufferGeometry />
+        <Material color="#00ff00" section={2} sectionNumber={sectionNumber} />
+        <torusKnotBufferGeometry args={[0.5, 0.15, 64, 100]} />
       </motion.mesh>
 
       <Stars />
