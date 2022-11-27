@@ -58,3 +58,46 @@ export const decorators = [
     );
   },
 ];
+
+// All stories expect a theme arg
+export const argTypes = {
+  ground: {
+    name: "ground",
+    defaultValue: true,
+    description: "display ground",
+    control: { type: "boolean" },
+  },
+  controls: {
+    name: "controls",
+    defaultValue: true,
+    description: "activate controls",
+    control: { type: "boolean" },
+  },
+  axes: {
+    name: "axes",
+    defaultValue: true,
+    description: "display axis",
+    control: { type: "boolean" },
+  },
+  grid: {
+    name: "grid",
+    defaultValue: true,
+    description: "display grid",
+    control: { type: "boolean" },
+  },
+  lights: {
+    name: "lights",
+    defaultValue: true,
+    description: "display lights",
+    control: { type: "boolean" },
+  },
+  fog: {
+    name: "fog",
+    defaultValue: true,
+    description: "display fog",
+    control: { type: "boolean" },
+  },
+};
+
+// The default value of the theme arg to all stories
+// export const args = { theme: "light" };

@@ -6,7 +6,7 @@ import { useControls, folder } from "leva";
 import { useFrame } from "@react-three/fiber";
 
 export default {
-  title: "Particules/general",
+  title: "3jsJourney/particules/basicParticules",
   componenet: Box,
   decorators: [
     (storyFn, context) => (
@@ -227,16 +227,16 @@ const Fragments = () => {
   });
   return (
     <points ref={points}>
-      <bufferGeometry attach="geometry">
+      <bufferGeometry attach='geometry'>
         <bufferAttribute
-          attach="attributes-position"
+          attach='attributes-position'
           count={count}
           array={positions}
           itemSize={3}
           usage={DynamicDrawUsage}
         />
         <bufferAttribute
-          attach="attributes-color"
+          attach='attributes-color'
           count={count}
           array={colors}
           itemSize={3}
@@ -244,7 +244,7 @@ const Fragments = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        attach="material"
+        attach='material'
         size={size}
         sizeAttenuation={true}
         transparent

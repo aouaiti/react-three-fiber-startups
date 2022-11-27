@@ -8,7 +8,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { useControls, folder } from "leva";
 
 export default {
-  title: "Staging/Lights",
+  title: "3jsJourney/Lights/basic",
   component: Box,
   decorators: [
     (storyFn, context) => (
@@ -122,7 +122,7 @@ const DLight = () => {
         ref={dLightRef}
         position={[-4, 1, 0]}
         variants={animateSpot}
-        initial="init"
+        initial='init'
         // animate="animate"
         castShadow
         // animate={{ x: 4 }}
@@ -130,7 +130,7 @@ const DLight = () => {
       >
         <orthographicCamera
           ref={shadowCam}
-          attach="shadow-camera"
+          attach='shadow-camera'
           top={top}
           left={left}
           right={right}
@@ -153,7 +153,7 @@ const Template = function LightsScene(...args) {
       <motion.group
         position={[0, 0.5, 0]}
         variants={animateBox}
-        animate="animate"
+        animate='animate'
         transition={{ duration: 1, flip: Infinity }}
       >
         <Box position={[0, 0, 0]} scale={0.5} castShadow receiveShadow>

@@ -13,7 +13,7 @@ import { NearestFilter, Vector3 } from "three";
 import { motion } from "framer-motion-3d";
 
 export default {
-  title: "scollAnimation/basic",
+  title: "3jsJourney/scrollAnimation/basicScrollAnimation",
   componenet: Box,
   decorators: [
     (storyFn, context) => (
@@ -46,8 +46,8 @@ const Material = ({ color, section, sectionNumber }) => {
     <motion.meshToonMaterial
       gradientMap={texture}
       variants={boxMaterial}
-      initial="initial"
-      animate="animate"
+      initial='initial'
+      animate='animate'
       transition={{
         duration: 0.5,
         repeat: sectionNumber === section ? 1 : 0,
@@ -137,8 +137,8 @@ const AnimatedBox = () => {
 
       <motion.mesh
         variants={boxScale}
-        initial="initial"
-        animate="animate"
+        initial='initial'
+        animate='animate'
         transition={{
           duration: 0.5,
           repeat: sectionNumber === 0 ? 3 : 0,
@@ -148,14 +148,14 @@ const AnimatedBox = () => {
         custom={0}
         position={[1, 0, 0]}
       >
-        <Material color="#ff0000" section={0} sectionNumber={sectionNumber} />
+        <Material color='#ff0000' section={0} sectionNumber={sectionNumber} />
         <cylinderBufferGeometry args={[0.5, 0.5, 1, 32]} />
       </motion.mesh>
 
       <motion.mesh
         variants={boxScale}
-        initial="initial"
-        animate="animate"
+        initial='initial'
+        animate='animate'
         transition={{
           duration: 0.5,
           repeat: sectionNumber === 1 ? 3 : 0,
@@ -165,14 +165,14 @@ const AnimatedBox = () => {
         custom={1}
         position={[-1, -6, 0]}
       >
-        <Material color="#0000ff" section={1} sectionNumber={sectionNumber} />
+        <Material color='#0000ff' section={1} sectionNumber={sectionNumber} />
         <torusBufferGeometry args={[0.6, 0.2, 16, 100]} />
       </motion.mesh>
 
       <motion.mesh
         variants={boxScale}
-        initial="initial"
-        animate="animate"
+        initial='initial'
+        animate='animate'
         transition={{
           duration: 0.5,
           repeat: sectionNumber === 2 ? 3 : 0,
@@ -182,7 +182,7 @@ const AnimatedBox = () => {
         custom={2}
         position={[1, -12, 0]}
       >
-        <Material color="#00ff00" section={2} sectionNumber={sectionNumber} />
+        <Material color='#00ff00' section={2} sectionNumber={sectionNumber} />
         <torusKnotBufferGeometry args={[0.5, 0.15, 64, 100]} />
       </motion.mesh>
 

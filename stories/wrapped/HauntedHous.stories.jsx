@@ -12,7 +12,7 @@ import { useCallback, useRef, useState, useEffect, use } from "react";
 import { useFrame } from "@react-three/fiber";
 
 export default {
-  title: "3jsJourney/hauntedHouse",
+  title: "3jsJourney/scenes/hauntedHouse",
   component: Box,
   decorators: [
     (storyFn, context) => (
