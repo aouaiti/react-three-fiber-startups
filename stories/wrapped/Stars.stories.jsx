@@ -9,9 +9,12 @@ export default {
     (storyFn, context) => (
       <Setup
         global={context.globals}
-        ground={StarsA.args.ground}
-        axes={StarsA.args.axes}
-        grid={StarsA.args.grid}
+        ground={context.args.ground}
+        axes={context.args.axes}
+        grid={context.args.grid}
+        controls={context.args.controls}
+        fog={context.args.fog}
+        lights={context.args.lights}
       >
         {" "}
         {storyFn()}
@@ -21,8 +24,14 @@ export default {
   argTypes: {
     stars: {
       name: "stars",
-      // defaultValue: true,
+      defaultValue: true,
       description: "display stars",
+      control: { type: "boolean" },
+    },
+    fog: {
+      name: "fog",
+      defaultValue: true,
+      description: "display fog",
       control: { type: "boolean" },
     },
   },
@@ -35,7 +44,12 @@ const Template = function StarsScene(...args) {
 };
 
 export const StarsA = Template.bind({});
-StarsA.args = { ground: true, axes: true, grid: true };
+StarsA.args = {
+  ground: true,
+  axes: true,
+  grid: true,
+  stars: true,
+};
 
 StarsA.parameters = {
   backgrounds: { disable: true },

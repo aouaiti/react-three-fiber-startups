@@ -12,16 +12,26 @@ export default {
     (storyFn, context) => (
       <Setup
         global={context.globals}
-        ground={Particules.args.ground}
-        axes={Particules.args.axes}
-        grid={Particules.args.grid}
+        ground={context.args.ground}
+        axes={context.args.axes}
+        grid={context.args.grid}
         cameraPosition={new Vector3(10, 10, 10)}
-        fog={false}
+        controls={context.args.controls}
+        fog={context.args.fog}
+        lights={context.args.lights}
       >
         {storyFn()}
       </Setup>
     ),
   ],
+  argTypes: {
+    fog: {
+      name: "fog",
+      defaultValue: false,
+      description: "display fog",
+      control: { type: "boolean" },
+    },
+  },
 };
 
 const urls = {
@@ -47,7 +57,7 @@ const geometries = {
   energy: "energy",
 };
 
-const Fragments = () => {
+const Fragments = ({ arg }) => {
   const {
     count,
     url,
@@ -216,6 +226,7 @@ const Fragments = () => {
     centering,
     insideColor,
     outsideColor,
+    arg,
   ]);
   const textures = useTexture({
     map: url,
@@ -227,16 +238,16 @@ const Fragments = () => {
   });
   return (
     <points ref={points}>
-      <bufferGeometry attach='geometry'>
+      <bufferGeometry attach="geometry">
         <bufferAttribute
-          attach='attributes-position'
+          attach="attributes-position"
           count={count}
           array={positions}
           itemSize={3}
           usage={DynamicDrawUsage}
         />
         <bufferAttribute
-          attach='attributes-color'
+          attach="attributes-color"
           count={count}
           array={colors}
           itemSize={3}
@@ -244,7 +255,7 @@ const Fragments = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        attach='material'
+        attach="material"
         size={size}
         sizeAttenuation={true}
         transparent
@@ -258,10 +269,10 @@ const Fragments = () => {
 };
 
 const Template = function Particules(...args) {
-  console.log(args);
+  console.log(args[0]);
   return (
     <Suspense>
-      <Fragments />
+      <Fragments arg={args[0]} />
     </Suspense>
   );
 };

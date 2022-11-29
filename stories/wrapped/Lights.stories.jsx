@@ -14,16 +14,26 @@ export default {
     (storyFn, context) => (
       <Setup
         global={context.globals}
-        ground={LightsScene.args.ground}
-        axes={LightsScene.args.axes}
-        grid={LightsScene.args.grid}
-        lights={LightsScene.args.lights}
+        ground={context.args.ground}
+        axes={context.args.axes}
+        grid={context.args.grid}
+        fog={context.args.fog}
+        controls={context.args.controls}
+        lights={context.args.lights}
       >
         {" "}
         {storyFn()}
       </Setup>
     ),
   ],
+  argTypes: {
+    lights: {
+      name: "lights",
+      defaultValue: false,
+      description: "display lights",
+      control: { type: "boolean" },
+    },
+  },
 };
 
 const animateSpot = {
@@ -122,7 +132,7 @@ const DLight = () => {
         ref={dLightRef}
         position={[-4, 1, 0]}
         variants={animateSpot}
-        initial='init'
+        initial="init"
         // animate="animate"
         castShadow
         // animate={{ x: 4 }}
@@ -130,7 +140,7 @@ const DLight = () => {
       >
         <orthographicCamera
           ref={shadowCam}
-          attach='shadow-camera'
+          attach="shadow-camera"
           top={top}
           left={left}
           right={right}
@@ -153,7 +163,7 @@ const Template = function LightsScene(...args) {
       <motion.group
         position={[0, 0.5, 0]}
         variants={animateBox}
-        animate='animate'
+        animate="animate"
         transition={{ duration: 1, flip: Infinity }}
       >
         <Box position={[0, 0, 0]} scale={0.5} castShadow receiveShadow>

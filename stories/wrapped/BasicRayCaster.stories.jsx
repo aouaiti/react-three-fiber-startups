@@ -5,20 +5,22 @@ export default {
   title: "3jsJourney/rayCaster/basicRayCaster",
   component: Box,
   decorators: [
-    (storyFn, context) => (
-      <Setup
-        transparent={context.args.transparent}
-        fog={context.args.fog}
-        controls={context.args.controls}
-        global={context.globals}
-        lights={context.args.lights}
-        axes={context.args.axes}
-        grid={context.args.grid}
-        ground={context.args.ground}
-      >
-        {storyFn()}
-      </Setup>
-    ),
+    (storyFn, context) => {
+      return (
+        <Setup
+          transparent={context.args.transparent}
+          fog={context.args.fog}
+          controls={context.args.controls}
+          global={context.globals}
+          lights={context.args.lights}
+          axes={context.args.axes}
+          grid={context.args.grid}
+          ground={context.args.ground}
+        >
+          {storyFn()}
+        </Setup>
+      );
+    },
   ],
 };
 

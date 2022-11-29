@@ -18,16 +18,26 @@ export default {
     (storyFn, context) => (
       <Setup
         global={context.globals}
-        ground={HauntedHouse.args.ground}
-        axes={HauntedHouse.args.axes}
-        grid={HauntedHouse.args.grid}
-        lights={false}
+        ground={context.args.ground}
+        axes={context.args.axes}
+        grid={context.args.grid}
+        controls={context.args.controls}
+        lights={context.args.lights}
+        fog={context.args.fog}
       >
         {" "}
         {storyFn()}
       </Setup>
     ),
   ],
+  argTypes: {
+    lights: {
+      name: "lights",
+      defaultValue: false,
+      description: "display lights",
+      control: { type: "boolean" },
+    },
+  },
 };
 
 const Template = function HauntedHouse(...args) {

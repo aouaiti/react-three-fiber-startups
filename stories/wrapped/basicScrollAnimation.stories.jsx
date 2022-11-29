@@ -1,6 +1,12 @@
-import { Box, PerspectiveCamera, Stars, useTexture } from "@react-three/drei";
+import {
+  Box,
+  PerspectiveCamera,
+  Stars,
+  useTexture,
+  Center,
+} from "@react-three/drei";
 import { Setup } from "../Wrapper";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useEffect, useCallback, useState } from "react";
 import {
   useScroll,
@@ -16,19 +22,33 @@ export default {
   title: "3jsJourney/scrollAnimation/basicScrollAnimation",
   componenet: Box,
   decorators: [
-    (storyFn, context) => (
-      <Setup
-        global={context.globals}
-        fog={false}
-        dom={true}
-        transparent={true}
-        controls={false}
-        cameraPosition={new Vector3(0, 0, -4)}
-      >
-        {storyFn()}
-      </Setup>
-    ),
+    (storyFn, context) => {
+      return (
+        <Setup
+          global={context.globals}
+          fog={false}
+          dom={true}
+          transparent={true}
+          controls={false}
+          cameraPosition={new Vector3(0, 0, -3)}
+        >
+          {storyFn()}
+        </Setup>
+      );
+    },
   ],
+  argTypes: {
+    theme: {
+      name: "Theme",
+      description: "Global theme",
+      defaultValue: "light",
+      toolbar: {
+        icon: "lightning",
+        items: ["dark", "light", "transparent"],
+        // showName: true,
+      },
+    },
+  },
 };
 
 const Material = ({ color, section, sectionNumber }) => {
@@ -46,8 +66,8 @@ const Material = ({ color, section, sectionNumber }) => {
     <motion.meshToonMaterial
       gradientMap={texture}
       variants={boxMaterial}
-      initial='initial'
-      animate='animate'
+      initial="initial"
+      animate="animate"
       transition={{
         duration: 0.5,
         repeat: sectionNumber === section ? 1 : 0,
@@ -128,64 +148,68 @@ const AnimatedBox = () => {
       scale: x === sectionNumber ? 1.2 : 1,
     }),
   };
-
+  const margin = 0.5;
+  const { width, height } = useThree((state) => state.viewport);
   return (
     <>
       <group ref={group}>
         <PerspectiveCamera ref={cam} makeDefault position={[0, 0, 6]} />
       </group>
+      <Center center position={[width / 7 + margin, 0, 0]}>
+        <motion.mesh
+          variants={boxScale}
+          initial="initial"
+          animate="animate"
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 0 ? 3 : 0,
+            repeatType: "mirror",
+          }}
+          ref={box1}
+          custom={0}
+          position={[1, 0, 0]}
+        >
+          <Material color="#ff0000" section={0} sectionNumber={sectionNumber} />
+          <cylinderBufferGeometry args={[0.5, 0.5, 1, 32]} />
+        </motion.mesh>
+      </Center>
 
-      <motion.mesh
-        variants={boxScale}
-        initial='initial'
-        animate='animate'
-        transition={{
-          duration: 0.5,
-          repeat: sectionNumber === 0 ? 3 : 0,
-          repeatType: "mirror",
-        }}
-        ref={box1}
-        custom={0}
-        position={[1, 0, 0]}
-      >
-        <Material color='#ff0000' section={0} sectionNumber={sectionNumber} />
-        <cylinderBufferGeometry args={[0.5, 0.5, 1, 32]} />
-      </motion.mesh>
-
-      <motion.mesh
-        variants={boxScale}
-        initial='initial'
-        animate='animate'
-        transition={{
-          duration: 0.5,
-          repeat: sectionNumber === 1 ? 3 : 0,
-          repeatType: "mirror",
-        }}
-        ref={box2}
-        custom={1}
-        position={[-1, -6, 0]}
-      >
-        <Material color='#0000ff' section={1} sectionNumber={sectionNumber} />
-        <torusBufferGeometry args={[0.6, 0.2, 16, 100]} />
-      </motion.mesh>
-
-      <motion.mesh
-        variants={boxScale}
-        initial='initial'
-        animate='animate'
-        transition={{
-          duration: 0.5,
-          repeat: sectionNumber === 2 ? 3 : 0,
-          repeatType: "mirror",
-        }}
-        ref={box3}
-        custom={2}
-        position={[1, -12, 0]}
-      >
-        <Material color='#00ff00' section={2} sectionNumber={sectionNumber} />
-        <torusKnotBufferGeometry args={[0.5, 0.15, 64, 100]} />
-      </motion.mesh>
-
+      <Center center position={[-width / 3.5 + margin, -6, 0]}>
+        <motion.mesh
+          variants={boxScale}
+          initial="initial"
+          animate="animate"
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 1 ? 3 : 0,
+            repeatType: "mirror",
+          }}
+          ref={box2}
+          custom={1}
+          position={[-1, -6, 0]}
+        >
+          <Material color="#0000ff" section={1} sectionNumber={sectionNumber} />
+          <torusBufferGeometry args={[0.6, 0.2, 16, 100]} />
+        </motion.mesh>
+      </Center>
+      <Center center position={[width / 7 + margin, -12, 0]}>
+        <motion.mesh
+          variants={boxScale}
+          initial="initial"
+          animate="animate"
+          transition={{
+            duration: 0.5,
+            repeat: sectionNumber === 2 ? 3 : 0,
+            repeatType: "mirror",
+          }}
+          ref={box3}
+          custom={2}
+          position={[1, -12, 0]}
+        >
+          <Material color="#00ff00" section={2} sectionNumber={sectionNumber} />
+          <torusKnotBufferGeometry args={[0.5, 0.15, 64, 100]} />
+        </motion.mesh>
+      </Center>
       <Stars />
     </>
   );
@@ -206,6 +230,7 @@ BasicScrollScene.args = {
   axes: true,
   grid: true,
   lights: true,
+  theme: "light",
 };
 BasicScrollScene.parameters = {
   backgrounds: { disable: true },
