@@ -37,18 +37,6 @@ export default {
       );
     },
   ],
-  argTypes: {
-    theme: {
-      name: "Theme",
-      description: "Global theme",
-      defaultValue: "light",
-      toolbar: {
-        icon: "lightning",
-        items: ["dark", "light", "transparent"],
-        // showName: true,
-      },
-    },
-  },
 };
 
 const Material = ({ color, section, sectionNumber }) => {
@@ -126,7 +114,7 @@ const AnimatedBox = () => {
     // console.log(diff);
     const fps = delta.clock.oldTime - delta.clock.elapsedTime;
     const s = spring.get();
-    const velo = springV.get() / 5;
+    const velo = springV.get();
     boxArr.map((x, i) => {
       x.current.rotation.x = fps * 0.001 + velo * 5;
       x.current.rotation.y = fps * 0.0015 + velo * 5;
@@ -216,7 +204,6 @@ const AnimatedBox = () => {
 };
 
 const Template = function BasicScrollScene(...args) {
-  args[1].globals.theme = "black";
   //   console.log(args[1]);
   return (
     <>
@@ -230,7 +217,6 @@ BasicScrollScene.args = {
   axes: true,
   grid: true,
   lights: true,
-  theme: "light",
 };
 BasicScrollScene.parameters = {
   backgrounds: { disable: true },

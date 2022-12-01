@@ -1,5 +1,8 @@
 import { Box } from "@react-three/drei";
 import { Setup } from "../Wrapper";
+import { Vector3 } from "three";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion-3d";
 
 export default {
   title: "3jsJourney/rayCaster/basicRayCaster",
@@ -24,11 +27,42 @@ export default {
   ],
 };
 
+const boxAnimation = {
+  init: {
+    y: -2,
+  },
+  animate: {
+    y: 2,
+  },
+};
+
 const Template = function basicRayCaster(...args) {
-  console.log(args[0]);
+  const [ray, setRay] = useState(null);
+  const [box, setBox] = useState(null);
+  useEffect(() => {
+    if (!ray || !box) return;
+    console.log(ray.ray.direction);
+    const intersect = ray.intersectObject(box);
+    console.log(intersect);
+  }, [box, ray]);
   return (
     <>
-      <Box></Box>
+      <motion.group
+        variants={boxAnimation}
+        initial="init"
+        animate="animate"
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "mirror",
+        }}
+      >
+        <Box ref={setBox} />
+      </motion.group>
+      <raycaster
+        ref={setRay}
+        ray={[new Vector3(-3, 0, 0), new Vector3(1, 0, 0)]}
+      />
     </>
   );
 };
