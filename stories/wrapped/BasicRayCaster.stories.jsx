@@ -1,8 +1,10 @@
 import { Box } from "@react-three/drei";
 import { Setup } from "../Wrapper";
 import { Vector3 } from "three";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion-3d";
+import { isEqual } from "lodash";
+import { useFrame } from "@react-three/fiber";
 
 export default {
   title: "3jsJourney/rayCaster/basicRayCaster",
@@ -25,6 +27,26 @@ export default {
       );
     },
   ],
+  argTypes: {
+    ground: {
+      name: "ground",
+      defaultValue: false,
+      description: "display ground",
+      control: { type: "boolean" },
+    },
+    fog: {
+      name: "fog",
+      defaultValue: false,
+      description: "display fog",
+      control: { type: "boolean" },
+    },
+    grid: {
+      name: "grid",
+      defaultValue: false,
+      description: "display grid",
+      control: { type: "boolean" },
+    },
+  },
 };
 
 const boxAnimation = {
@@ -36,15 +58,39 @@ const boxAnimation = {
   },
 };
 
+const useMemoizedState = (initialValue) => {
+  const [state, _setState] = useState(initialValue);
+
+  const setState = (newState) => {
+    _setState((prev) => {
+      if (!isEqual(newState, prev)) {
+        console.log(newState.length ? newState[0].uv : "not intersected");
+        return newState;
+      } else {
+        return prev;
+      }
+    });
+  };
+  return [state, setState];
+};
+
 const Template = function basicRayCaster(...args) {
   const [ray, setRay] = useState(null);
   const [box, setBox] = useState(null);
+  const [_, setIntersect] = useMemoizedState(null);
+  const [position, setPosition] = useState(null);
+  const [direction, setDirection] = useState(null);
   useEffect(() => {
-    if (!ray || !box) return;
-    console.log(ray.ray.direction);
-    const intersect = ray.intersectObject(box);
-    console.log(intersect);
-  }, [box, ray]);
+    setPosition(new Vector3(-3, 0, 0));
+    setDirection(new Vector3(1, 0, 0));
+  }, []);
+  const Framing = () => {
+    useFrame((delta) => {
+      if (!ray || !box) return;
+      setIntersect(ray.intersectObject(box));
+    });
+    return null;
+  };
   return (
     <>
       <motion.group
@@ -59,10 +105,8 @@ const Template = function basicRayCaster(...args) {
       >
         <Box ref={setBox} />
       </motion.group>
-      <raycaster
-        ref={setRay}
-        ray={[new Vector3(-3, 0, 0), new Vector3(1, 0, 0)]}
-      />
+      <raycaster ref={setRay} ray={[position, direction]} />
+      <Framing />
     </>
   );
 };
