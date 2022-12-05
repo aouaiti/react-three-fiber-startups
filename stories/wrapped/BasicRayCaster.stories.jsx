@@ -58,15 +58,20 @@ const boxAnimation = {
   },
 };
 
-const useMemoizedState = (initialValue) => {
+const useMemoizedState = (initialValue, box) => {
   const [state, _setState] = useState(initialValue);
 
   const setState = (newState) => {
     _setState((prev) => {
       if (!isEqual(newState, prev)) {
-        console.log(newState.length ? newState[0].uv : "not intersected");
-        return newState;
+        if (prev?.length !== newState?.length) {
+          console.log(newState.length ? newState : "not intersected");
+          if (newState.length) newState[0].object.material.color.set("#f00");
+          return newState;
+        }
+        return prev;
       } else {
+        box.material.color.set("#00f");
         return prev;
       }
     });
@@ -77,7 +82,7 @@ const useMemoizedState = (initialValue) => {
 const Template = function basicRayCaster(...args) {
   const [ray, setRay] = useState(null);
   const [box, setBox] = useState(null);
-  const [_, setIntersect] = useMemoizedState(null);
+  const [_, setIntersect] = useMemoizedState(null, box);
   const [position, setPosition] = useState(null);
   const [direction, setDirection] = useState(null);
   useEffect(() => {
@@ -87,6 +92,7 @@ const Template = function basicRayCaster(...args) {
   const Framing = () => {
     useFrame((delta) => {
       if (!ray || !box) return;
+      // box.material.color.set("#00f");
       setIntersect(ray.intersectObject(box));
     });
     return null;
