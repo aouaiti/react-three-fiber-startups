@@ -109,7 +109,7 @@ const Template = function basicRayCaster(...args) {
           repeatType: "mirror",
         }}
       >
-        <Box ref={setBox} />
+        <Box ref={setBox} onPointerEnter={(e) => console.log(e)}/>
       </motion.group>
       <raycaster ref={setRay} ray={[position, direction]} />
       <Framing />
