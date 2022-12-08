@@ -20,6 +20,7 @@ export const Setup = ({
   ...restProps
 }) => {
   const theme = global.theme === "light" ? "#fff" : "#121212";
+  const fogtheme = global.theme === "light" ? "#87CEEB" : "#000";
 
   return (
     <>
@@ -49,7 +50,7 @@ export const Setup = ({
             <Plane
               position={[0, -0.001, 0]}
               rotation-x={-Math.PI / 2}
-              args={[100, 100, 1, 1]}
+              args={[200, 200, 1, 1]}
               receiveShadow
             >
               <meshStandardMaterial color={theme} wireframe={false} />

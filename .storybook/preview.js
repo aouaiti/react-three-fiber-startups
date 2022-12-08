@@ -41,9 +41,9 @@ export const decorators = [
   (Story, context) => {
     const theme =
       context.globals.theme === "light"
-        ? "white"
+        ? "#fff"
         : context.globals.theme === "dark"
-        ? "black"
+        ? "#030303"
         : "transparent";
     return (
       <div
