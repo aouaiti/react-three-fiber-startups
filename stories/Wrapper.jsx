@@ -34,15 +34,15 @@ export const Setup = ({
       >
         <Canvas
           gl={{ alpha: true }}
-          shadows={{ type: PCFSoftShadowMap }}
+          shadows
           camera={{ position: cameraPosition, fov: cameraFov }}
           {...restProps}
         >
           {children}
           {lights && (
             <>
-              <ambientLight intensity={0.8} />
-              <pointLight intensity={1} position={[0, 6, 0]} />
+              <ambientLight intensity={0.3} />
+              <pointLight castShadow intensity={1} position={[0, 6, 0]} />
             </>
           )}
           {fog && <fog attach="fog" args={[theme, 1, 15]} />}

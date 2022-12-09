@@ -1,6 +1,15 @@
-import { Sphere, Plane } from "@react-three/drei";
+import { Sphere, Plane, Environment, SpotLight } from "@react-three/drei";
 import { Setup } from "../Wrapper";
-import { Physics, usePlane, useSphere, Debug } from "@react-three/cannon";
+import {
+  Physics,
+  usePlane,
+  useSphere,
+  useBox,
+  Debug,
+} from "@react-three/cannon";
+import { Suspense, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useControls, folder } from "leva";
 
 export default {
   title: "3jsJourney/BasicPhysics",
@@ -35,31 +44,60 @@ const PlaneComponent = () => {
   const [plane] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0] }));
   return (
     <>
-      <Plane ref={plane} args={[40, 40, 1, 1]}></Plane>
+      <Plane receiveShadow ref={plane} args={[40, 40, 1, 1]}>
+        <meshStandardMaterial />
+      </Plane>
     </>
   );
 };
 
 const SphereComponent = () => {
-  const [sphere] = useSphere(() => ({
+  const { radius } = useControls("World", {
+    Sphere: folder({
+      radius: {
+        value: 0.5,
+        min: 0.1,
+        max: 2,
+        step: 0.001,
+      },
+    }),
+  });
+  const [sphere, api] = useSphere(() => ({
     mass: 1,
     position: [0, 3, 0],
-    radius: 0.5,
+    type: "Dynamic",
+    args: [radius],
+    friction: 0.1,
+    restitution: 0.7,
   }));
+
   return (
     <>
-      <Sphere ref={sphere}>
-        {/* <sphereBufferGeometry args={[0.5, 32, 16]} /> */}
-        <meshStandardMaterial metalness={0.7} roughness={0.1} />
-      </Sphere>
+      <mesh castShadow ref={sphere}>
+        <sphereBufferGeometry args={[radius, 32, 32]} />
+        <meshStandardMaterial metalness={1} roughness={0} />
+      </mesh>
     </>
   );
 };
 
 const Template = function BasicPhysics(...args) {
+  const { gravity } = useControls("World", {
+    Physics: folder({
+      gravity: { value: [0, -9.81, 0], step: 0.2 },
+    }),
+  });
   return (
     <>
-      <Physics>
+      <Suspense fallback={null}>
+        <Environment preset="sunset" />
+      </Suspense>
+      <Physics
+        // allowSleep
+        // broadphase="SAP"
+        gravity={gravity}
+        // defaultContactMaterial={{ friction: 0.1, restitution: 0.1 }}
+      >
         <Debug color="black" scale={1.1}>
           <SphereComponent />
         </Debug>
