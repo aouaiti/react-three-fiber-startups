@@ -68,7 +68,8 @@ const SphereComponent = () => {
     type: "Dynamic",
     args: [radius],
     friction: 0.1,
-    restitution: 0.7,
+    restitution: 0.9,
+    mass: 1,
   }));
 
   return (
@@ -87,16 +88,17 @@ const Template = function BasicPhysics(...args) {
       gravity: { value: [0, -9.81, 0], step: 0.2 },
     }),
   });
+
   return (
     <>
       <Suspense fallback={null}>
         <Environment preset="sunset" />
       </Suspense>
       <Physics
-        // allowSleep
+        allowSleep
         // broadphase="SAP"
         gravity={gravity}
-        // defaultContactMaterial={{ friction: 0.1, restitution: 0.1 }}
+        defaultContactMaterial={{ friction: 0.1, restitution: 0.5 }}
       >
         <Debug color="black" scale={1.1}>
           <SphereComponent />

@@ -108,8 +108,8 @@ const Fragments = ({ arg }) => {
       rfactor: {
         value: 0.1,
         min: 0,
-        max: 2,
-        step: 0.1,
+        max: 0.2,
+        step: 0.01,
         render: (get) => get("particles.props.geometry") === "galaxy",
       },
       centering: {
@@ -142,10 +142,9 @@ const Fragments = ({ arg }) => {
     if (geometry === "stairs") {
       for (let i = 0; i < count * 3; i += 3) {
         const rdm = Math.random();
-        positions[i] = Math.cos(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        positions[i] = Math.cos(rdm * Math.PI * 2) * 3 + Math.random() * 3;
         positions[i + 1] = (rdm - 0.5) * 15;
-        positions[i + 2] =
-          Math.sin(rdm * Math.PI * 2) * (3 + Math.random() * 3);
+        positions[i + 2] = Math.sin(rdm * Math.PI * 2) * 3 + Math.random() * 3;
         colors[i] = Math.random();
         colors[i + 1] = Math.random();
         colors[i + 2] = Math.random();
@@ -183,6 +182,7 @@ const Fragments = ({ arg }) => {
         const i3 = i * 3;
         const rdm = ((i % branches) / branches) * Math.PI * 2;
         const radius = Math.pow(Math.random(), 2) * 10;
+        // const radius = Math.random()* 10;
         const a = angle * radius;
         // randomize tentacles' width and height while widening the center
         const randomX =
@@ -209,7 +209,7 @@ const Fragments = ({ arg }) => {
         positions[i3 + 2] = Math.sin(rdm + a) * radius + randomZ;
         // color
         const mixColor = iCol.clone();
-        mixColor.lerp(oCol, 0.5);
+        mixColor.lerp(oCol, radius / 10);
         colors[i3] = mixColor.r;
         colors[i3 + 1] = mixColor.g;
         colors[i3 + 2] = mixColor.b;
